@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/authContext'
 import { doSignOut } from '../../firebase/auth';
-
+import './index.css'
 
 const Header = () => {
     const navigate = useNavigate()
@@ -13,10 +13,20 @@ const Header = () => {
                 userLoggedIn
                     ?
                     <>
-                        <button onClick={() => { doSignOut().then(() => { navigate('/login') }) }} className='text-sm text-blue-600 underline'>Logout</button>
+                       <button 
+  onClick={() => {
+    doSignOut().then(() => {
+      navigate('/login');
+    });
+  }}
+  className="btn-logout text-white "
+>
+  Logout
+</button>
                     </>
                     :
                     <>
+                        
                         <Link className='text-sm text-blue-600 underline' to={'/login'}>Login</Link>
                         <Link className='text-sm text-blue-600 underline' to={'/register'}>Register New Account</Link>
                     </>

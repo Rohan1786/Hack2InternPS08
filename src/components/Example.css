@@ -104,3 +104,19 @@
   font-size: 14px;
   margin-top: 20px;
 }
+
+.tokenAnalysisContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tokenAnalysisContainer h3 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.tokenAnalysisChart {
+  max-width: 500px; /* Adjust this as needed */
+}

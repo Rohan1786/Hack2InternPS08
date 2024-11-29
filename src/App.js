@@ -106,8 +106,9 @@ import PieChartGenerator from './components/PieChartGenerator'
 import Login from './components/auth/login';
 import Register from './components/auth/register';
 import Header from './components/header';
-import Home from './components/home';
+// import Home from './components/home';
 import { AuthProvider } from './contexts/authContext';
+import Example from './components/Example';
 
 function App() {
   const routesArray = [
@@ -125,7 +126,7 @@ function App() {
     },
     {
       path: "/home",
-      element: <PieChartGenerator />,
+      element: <Example />,
     },
     // Add a fallback route for unmatched paths
     {
@@ -140,9 +141,12 @@ function App() {
   return (
     <AuthProvider>
       <Header /> {/* Ensure Header is always visible */}
-      <div className="w-full h-screen flex flex-col">
-        {routesElement} {/* Render route elements here */}
-      </div>
+      {/* <div className="w-full h-screen flex flex-col"> */}
+        {routesElement} Render route elements here
+
+        {/* <Example/> */}
+      {/* </div> */}
+
     </AuthProvider>
   );
 }

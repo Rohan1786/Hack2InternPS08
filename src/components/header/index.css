@@ -1,0 +1,27 @@
+.btn-logout {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem; /* Adjusts the font size */
+    color: #ffffff; /* White text */
+    background-color: #667eea; /* Blue background */
+    border: none; /* Removes default border */
+    border-radius: 0.5rem; /* Adds rounded corners */
+    text-decoration: none; /* Removes underline */
+    cursor: pointer; /* Changes cursor to pointer */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .btn-logout:hover {
+    background-color: #5a67d8; /* Darker blue on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Adds shadow */
+  }
+  
+  .btn-logout:active {
+    background-color: #4c51bf; /* Even darker blue when pressed */
+  }
+  
+  .btn-logout:focus {
+    outline: none; /* Removes default focus outline */
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5); /* Adds focus ring */
+  }
+  
