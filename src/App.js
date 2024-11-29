@@ -109,12 +109,14 @@ import Header from './components/header';
 // import Home from './components/home';
 import { AuthProvider } from './contexts/authContext';
 import Example from './components/Example';
+import Dashboard from './components/Dashboard';
+
 
 function App() {
   const routesArray = [
     {
       path: "/",
-      element: <Example />,
+      element: <Dashboard />,
     },
     {
       path: "/login",
