@@ -71,6 +71,7 @@
 
 import React from 'react'
 import PieChartGenerator from './components/PieChartGenerator'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import Example from './components/Example'
 
 const App = () => {
