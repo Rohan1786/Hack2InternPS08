@@ -142,7 +142,7 @@ function App() {
     <AuthProvider>
       <Header /> {/* Ensure Header is always visible */}
       {/* <div className="w-full h-screen flex flex-col"> */}
-        {routesElement} Render route elements here
+        {routesElement}
 
         {/* <Example/> */}
       {/* </div> */}
