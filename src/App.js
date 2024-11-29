@@ -69,21 +69,86 @@
 
 // export default App;
 
-import React from 'react'
-import PieChartGenerator from './components/PieChartGenerator'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import React from 'react'
+// import PieChartGenerator from './components/PieChartGenerator'
+// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import Example from './components/Example'
 
-const App = () => {
+
+// const App = () => {
+//   return (
+//     <div>
+//       {/* <BrowserRouter> */}
+//     <Router>
+// //         <Routes>
+// //           {/* Define routes here */}
+// //           
+// //           <Route path="/" element={<PieChartGenerator />} />
+// //           <Route path="/example" element={<Example/>} />
+// {/* //           <Route path="/PieChart" element={<PieChart/>} /> */}
+// {/* //           <Route path="/auth" element={<AuthButton />} /> */}
+// //         </Routes>
+// //       </Router>
+// {/* <PieChartGenerator/> */}
+//       {/* <Example/> */}
+//       {/* </BrowserRouter> */}
+//     </div>
+//   )
+// }
+
+// export default App
+
+
+
+import React from 'react';
+import { useRoutes } from 'react-router-dom';
+import PieChartGenerator from './components/PieChartGenerator'
+import Login from './components/auth/login';
+import Register from './components/auth/register';
+import Header from './components/header';
+import Home from './components/home';
+import { AuthProvider } from './contexts/authContext';
+
+function App() {
+  const routesArray = [
+    {
+      path: "/",
+      element: <Login />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/register",
+      element: <Register />,
+    },
+    {
+      path: "/home",
+      element: <PieChartGenerator />,
+    },
+    // Add a fallback route for unmatched paths
+    {
+      path: "*",
+      element: <Login />,
+    },
+  ];
+
+  // Use the `useRoutes` hook to create route elements
+  const routesElement = useRoutes(routesArray);
+
   return (
-    <div>
-<PieChartGenerator/>
-      {/* <Example/> */}
-    </div>
-  )
+    <AuthProvider>
+      <Header /> {/* Ensure Header is always visible */}
+      <div className="w-full h-screen flex flex-col">
+        {routesElement} {/* Render route elements here */}
+      </div>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
+
 //just for clerk provider
 
 

@@ -1,0 +1,126 @@
+/* General styling for the main container */
+.main-container {
+    background-color: #1e1e2f; /* Dark background */
+    color: #e0e0e0; /* Light text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Styling for the login card */
+.login-card {
+    width: 24rem;
+    background-color: #2a2a42; /* Darker blue with a hint of grey */
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Hover effect on the card */
+.login-card:hover {
+    transform: scale(1.02);
+}
+
+/* Header styling */
+.login-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-header h3 {
+    color: #b3c7e6; /* Light blue text */
+    font-size: 1.5rem;
+}
+
+/* Form styling */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #c0c0c0; /* Slightly lighter text */
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #4c4c6d;
+    border-radius: 0.5rem;
+    background-color: #3e3e5c; /* Darker background for inputs */
+    color: #d1d1d1;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+/* Focus effect on inputs */
+input:focus {
+    border-color: #6b8eaf; /* Light blue border on focus */
+}
+
+/* Button styling */
+button {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #4a7ab1; /* Blue button */
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #5a8bb3; /* Lighter blue */
+    transform: translateY(-3px);
+}
+
+button:disabled {
+    background-color: #7a7a8b; /* Greyish color for disabled */
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Google sign-in button styling */
+.google-signin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #6b8eaf;
+    background-color: #2a2a42;
+    border-radius: 0.5rem;
+    color: #d1d1d1;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.google-signin-btn:hover {
+    background-color: #3e3e5c;
+    transform: translateY(-3px);
+}
+
+/* Error message styling */
+.error-message {
+    color: #ff4c4c; /* Red color for error */
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
