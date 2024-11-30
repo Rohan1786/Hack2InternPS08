@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import '../App.css'; // Tailwind CSS styles
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from React Router
@@ -27,12 +28,14 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className={`w-full p-6 ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-black'}`}>
         <header className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">Welcome Back,to PieChart World!</h1>
+          <h1 className="text-3xl font-bold">Welcome Back, to PieChart World!</h1>
           <div className="flex space-x-2">
             <button
               onClick={handleButtonClick}
               className={`px-4 py-2 font-semibold rounded-lg transition transform ${
-                isActivated ? 'bg-green-500 hover:bg-green-600 hover:scale-105' : 'bg-blue-500 hover:bg-blue-600 hover:scale-105'
+                isActivated
+                  ? 'bg-green-500 hover:bg-green-600 hover:scale-105'
+                  : 'bg-blue-500 hover:bg-blue-600 hover:scale-105'
               } text-white shadow-lg hover:shadow-2xl`}
             >
               {isActivated ? 'Deactivate' : 'Activate'}
@@ -40,7 +43,9 @@ const Dashboard = () => {
             <button
               onClick={toggleDarkMode}
               className={`px-4 py-2 font-semibold rounded-lg transition transform ${
-                isDarkMode ? 'bg-yellow-500 hover:bg-yellow-600 hover:scale-105' : 'bg-gray-500 hover:bg-gray-600 hover:scale-105'
+                isDarkMode
+                  ? 'bg-yellow-500 hover:bg-yellow-600 hover:scale-105'
+                  : 'bg-gray-500 hover:bg-gray-600 hover:scale-105'
               } text-white shadow-lg hover:shadow-2xl`}
             >
               {isDarkMode ? 'Light Mode' : 'Dark Mode'}
@@ -74,9 +79,33 @@ const Dashboard = () => {
             <p className="mt-2">List of recent activities or events.</p>
           </div>
         </div>
+
+        {/* Hackathon Project Section */}
+        <div
+  className={`mt-12 p-6 rounded shadow-lg transition-colors duration-300 ${
+    isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'
+  }`}
+>
+  <h2 className="text-2xl font-bold mb-2">Samespace Startup Company Hackathon Project</h2>
+  <p className="text-lg">
+    This project is part of the <span className="font-semibold">Samespace Startup Company Hackathon</span>.
+    It demonstrates cutting-edge technologies like data visualization with Pie Charts, dark mode toggling, and
+    interactive widgets. The hackathon's focus is on innovation and user-friendly experiences.
+  </p>
+  <ul className="list-disc list-inside mt-4">
+    <li>Interactive Pie Chart visualization tools.</li>
+    <li>Customizable themes with Dark and Light mode toggles.</li>
+    <li>Widgets for data insights and recent activities.</li>
+    <li>Easy navigation between the dashboard and other sections.</li>
+  </ul>
+  <p className="mt-4">
+    Feel free to explore the project's features and contribute your ideas for future enhancements!
+  </p>
+</div>
       </div>
     </div>
   );
 };
 
 export default Dashboard;
+
