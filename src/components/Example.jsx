@@ -574,6 +574,453 @@
 // };
 
 // export default Example;
+// import React, { useState } from 'react';
+// import './Example.css';
+// import { IoCodeSlash, IoSend } from 'react-icons/io5';
+// import { BiPlanet } from 'react-icons/bi';
+// import { FaPython } from 'react-icons/fa';
+// import { TbMessageChatbot } from 'react-icons/tb';
+// import { GoogleGenerativeAI } from '@google/generative-ai';
+// import { Pie } from 'react-chartjs-2';
+// import { Chart as ChartJS, Title, Tooltip, Legend } from 'chart.js';
+
+// ChartJS.register(Title, Tooltip, Legend);
+
+// const Example = () => {
+//   const [message, setMessage] = useState('');
+//   const [isResponseScreen, setIsResponseScreen] = useState(false);
+//   const [messages, setMessages] = useState([]);
+//   const [tokenData, setTokenData] = useState(null);
+//   const [count, setCount] = useState(0);
+//   const chartRef = React.useRef(null); // Reference to the chart
+
+//   const hitRequest = () => {
+//     if (message) {
+//       generateResponse(message);
+//     } else {
+//       alert('You must write something... !');
+//     }
+//   };
+
+//   const generateResponse = async (msg) => {
+//     if (!msg) return;
+
+//     try {
+//       const genAI = new GoogleGenerativeAI('AIzaSyA-rGrVZOyaNEq__0nylzVzXiZXa-LLD4E');
+//       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+//       const result = await model.generateContent(msg);
+
+//       const responseText = result.response.text();
+//       const newMessages = [
+//         ...messages,
+//         { type: 'userMsg', text: msg },
+//         { type: 'responseMsg', text: responseText },
+//       ];
+
+//       setMessages(newMessages);
+//       setIsResponseScreen(true);
+//       setMessage('');
+//       setCount(count + 1);
+//       console.log(responseText);
+
+//       // Analyze the response text for numerical data
+//       const numericalData = extractNumericalData(responseText);
+//       if (numericalData) {
+//         setTokenData(numericalData);
+//       }
+//     } catch (error) {
+//       console.error('Error generating response:', error);
+//       alert('Something went wrong while generating the response.');
+//     }
+//   };
+
+//   // Function to extract numerical data from the response text
+//   const extractNumericalData = (text) => {
+//     const numberRegex = /(\d+\.?\d*)\s?(%|points|runs|goals|votes|ratio|out of|total)?/g;
+//     const matches = [];
+//     let match;
+
+//     while ((match = numberRegex.exec(text)) !== null) {
+//       const value = match[1];
+//       const label = match[2] ? match[2] : 'Count';
+//       matches.push({ label, value: parseFloat(value) });
+//     }
+
+//     if (matches.length > 0) {
+//       const labels = matches.map((item) => item.label);
+//       const data = matches.map((item) => item.value);
+//       const backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#FF5733', '#33FF57', '#5A33FF', '#FF33B5'];
+
+//       return {
+//         labels,
+//         datasets: [
+//           {
+//             label: 'Numerical Data',
+//             data,
+//             backgroundColor: backgroundColors.slice(0, matches.length),
+//           },
+//         ],
+//       };
+//     }
+
+//     return null;
+//   };
+
+//   const newChat = () => {
+//     setIsResponseScreen(false);
+//     setMessages([]);
+//     setTokenData(null);
+//     setCount(0);
+//   };
+
+//   // Function to download the pie chart as an image
+//   const downloadChart = () => {
+//     if (chartRef.current) {
+//       const imageUrl = chartRef.current.toBase64Image(); // Safely get base64 image
+//       if (imageUrl) {
+//         const link = document.createElement('a');
+//         link.download = 'pie-chart.png';
+//         link.href = imageUrl;
+//         link.click();
+//       } else {
+//         console.error('Chart image could not be generated');
+//       }
+//     } else {
+//       console.error('Chart reference is not defined');
+//     }
+//   };
+
+//   return (
+//     <div className="container w-full min-h-screen overflow-x-hidden bg-[#0E0E0E] text-white">
+//       {isResponseScreen ? (
+//         <div className="h-[80vh] px-4 md:px-10 lg:px-20">
+//           <div className="header pt-[25px] flex items-center justify-between">
+//             <h2 className="text-2xl">AssistMe</h2>
+//             <button
+//               id="newChatBtn"
+//               className="bg-[#181818] p-2 md:p-3 rounded-[30px] cursor-pointer text-sm md:text-[14px] px-4 md:px-8"
+//               onClick={newChat}
+//             >
+//               New Chat
+//             </button>
+//           </div>
+
+//           <div className="messages mt-4">
+//             {messages.map((msg, index) => (
+//               <div key={index} className={`${msg.type} mb-2`}>{msg.text}</div>
+//             ))}
+//           </div>
+
+//           {/* Display Pie Chart if tokenData is available */}
+//           {tokenData && (
+//             <div className="mt-4">
+//               <h3 className="text-xl mb-2">Numerical Data Analysis</h3>
+//               <div className="relative">
+//                 <Pie ref={chartRef} data={tokenData} />
+//                 <button
+//                   className="absolute top-0 right-0 bg-[#201f1f] p-2 rounded cursor-pointer"
+//                   onClick={downloadChart}
+//                 >
+//                   Download Chart
+//                 </button>
+//               </div>
+//             </div>
+           
+//           )}
+//         </div>
+//       ) : (
+//         <div className="middle h-[80vh] flex flex-col items-center justify-center px-4 md:px-10 lg:px-20">
+//           <h1 className="text-4xl mb-6">Assist Me To Create Py-Chart</h1>
+//           <div className="boxes grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
+//               <p className="text-[18px]">
+//                 What is coding? <br />
+//                 How can we learn it?
+//               </p>
+//               <i className="absolute right-3 bottom-3 text-[18px]"><IoCodeSlash /></i>
+//             </div>
+//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
+//               <p className="text-[18px]">
+//                 Which is the red <br />
+//                 planet of the solar <br />
+//                 system?
+//               </p>
+//               <i className="absolute right-3 bottom-3 text-[18px]"><BiPlanet /></i>
+//             </div>
+//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
+//               <p className="text-[18px]">
+//                 In which year was Python <br />
+//                 invented?
+//               </p>
+//               <i className="absolute right-3 bottom-3 text-[18px]"><FaPython /></i>
+//             </div>
+//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
+//               <p className="text-[18px]">
+//                 How can we use <br />
+//                 AI for adoption?
+//               </p>
+//               <i className="absolute right-3 bottom-3 text-[18px]"><TbMessageChatbot /></i>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+
+//       <div className="bottom w-full flex flex-col items-center mt-4">
+//         <div className="inputBox w-full sm:w-3/4 md:w-2/3 lg:w-1/2 text-[15px] py-2 flex items-center bg-[#181818] rounded-[30px]">
+//           <input
+//             value={message}
+//             onChange={(e) => setMessage(e.target.value)}
+//             type="text"
+//             className="p-2 pl-4 bg-transparent flex-1 outline-none border-none"
+//             placeholder="Write your message here..."
+//             id="messageBox"
+//           />
+//           {message === '' ? (
+//             ''
+//           ) : (
+//             <i
+//               className="text-green-500 text-[20px] mr-4 cursor-pointer"
+//               onClick={hitRequest}
+//             >
+//               <IoSend />
+//             </i>
+//           )}
+//         </div>
+//         <p className="text-[gray] text-[14px] my-4 text-center">
+//           AssistMe is developed by Rohan Pawar. This AI uses the Gemini API to provide responses.
+//         </p>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Example;
+// import React, { useState } from 'react';
+// import './Example.css';
+// import { IoCodeSlash, IoSend } from 'react-icons/io5';
+// import { BiPlanet } from 'react-icons/bi';
+// import { FaPython } from 'react-icons/fa';
+// import { TbMessageChatbot } from 'react-icons/tb';
+// import { GoogleGenerativeAI } from '@google/generative-ai';
+// import { Pie } from 'react-chartjs-2';
+// import { Chart as ChartJS, Title, Tooltip, Legend } from 'chart.js';
+
+// ChartJS.register(Title, Tooltip, Legend);
+
+// const Example = () => {
+//   const [message, setMessage] = useState('');
+//   const [isResponseScreen, setIsResponseScreen] = useState(false);
+//   const [messages, setMessages] = useState([]);
+//   const [tokenData, setTokenData] = useState(null);
+//   const [count, setCount] = useState(0);
+//   const chartRef = React.useRef(null);
+
+//   const hitRequest = () => {
+//     if (message) {
+//       generateResponse(message);
+//     } else {
+//       alert('You must write something... !');
+//     }
+//   };
+
+//   const generateResponse = async (msg) => {
+//     if (!msg) return;
+
+//     try {
+//       const genAI = new GoogleGenerativeAI('AIzaSyA-rGrVZOyaNEq__0nylzVzXiZXa-LLD4E');
+//       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+//       const result = await model.generateContent(msg);
+
+//       const responseText = result.response.text();
+//       const newMessages = [
+//         ...messages,
+//         { type: 'userMsg', text: msg },
+//         { type: 'responseMsg', text: responseText },
+//       ];
+
+//       setMessages(newMessages);
+//       setIsResponseScreen(true);
+//       setMessage('');
+//       setCount(count + 1);
+//       console.log(responseText);
+
+//       const numericalData = extractNumericalData(responseText);
+//       if (numericalData) {
+//         setTokenData(numericalData);
+//       }
+//     } catch (error) {
+//       console.error('Error generating response:', error);
+//       alert('Something went wrong while generating the response.');
+//     }
+//   };
+
+//   const extractNumericalData = (text) => {
+//     const numberRegex = /(\d+\.?\d*)\s?(%|points|runs|goals|votes|ratio|out of|total)?/g;
+//     const matches = [];
+//     let match;
+
+//     while ((match = numberRegex.exec(text)) !== null) {
+//       const value = match[1];
+//       const label = match[2] ? match[2] : 'Count';
+//       matches.push({ label, value: parseFloat(value) });
+//     }
+
+//     if (matches.length > 0) {
+//       const labels = matches.map((item) => item.label);
+//       const data = matches.map((item) => item.value);
+//       const backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#FF5733', '#33FF57', '#5A33FF', '#FF33B5'];
+
+//       return {
+//         labels,
+//         datasets: [
+//           {
+//             label: 'Numerical Data',
+//             data,
+//             backgroundColor: backgroundColors.slice(0, matches.length),
+//           },
+//         ],
+//       };
+//     }
+
+//     return null;
+//   };
+
+//   const newChat = () => {
+//     setIsResponseScreen(false);
+//     setMessages([]);
+//     setTokenData(null);
+//     setCount(0);
+//   };
+
+//   const downloadChart = () => {
+//     if (chartRef.current) {
+//       const imageUrl = chartRef.current.toBase64Image();
+//       if (imageUrl) {
+//         const link = document.createElement('a');
+//         link.download = 'pie-chart.png';
+//         link.href = imageUrl;
+//         link.click();
+//       } else {
+//         console.error('Chart image could not be generated');
+//       }
+//     } else {
+//       console.error('Chart reference is not defined');
+//     }
+//   };
+
+//   return (
+//     <div className="container w-full min-h-screen overflow-x-hidden bg-[#0E0E0E] text-white">
+//       {isResponseScreen ? (
+//         <div className="h-[80vh] px-4 md:px-10 lg:px-20">
+//           <div className="header pt-[25px] flex items-center justify-between">
+//             <h2 className="text-2xl">AssistMe</h2>
+//             <button
+//               id="newChatBtn"
+//               className="bg-[#181818] p-2 md:p-3 rounded-[30px] cursor-pointer text-sm md:text-[14px] px-4 md:px-8"
+//               onClick={newChat}
+//             >
+//               New Chat
+//             </button>
+//           </div>
+
+//           <div className="messages mt-4">
+//             {messages.map((msg, index) => (
+//               <div key={index} className={`${msg.type} mb-2`}>{msg.text}</div>
+//             ))}
+//           </div>
+
+//           {/* Display Pie Chart */}
+//           {tokenData && (
+//             <div className="mt-4">
+//               <div className="relative">
+//                 <Pie ref={chartRef} data={tokenData} />
+//                 <button
+//                   className="absolute top-0 right-0 bg-[#201f1f] p-2 rounded cursor-pointer"
+//                   onClick={downloadChart}
+//                 >
+//                   Download Chart
+//                 </button>
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Display "Numeric Data Analysis" section */}
+//           {tokenData && (
+//             <div className="mt-4">
+//               <h3 className="text-xl mb-2">Numeric Data Analysis</h3>
+//               {/* Add content or summary for the numerical data analysis here */}
+//               <p className="text-gray-400">Analysis content goes here...</p>
+//             </div>
+//           )}
+//         </div>
+//       ) : (
+//         <div className="middle h-[80vh] flex flex-col items-center justify-center px-4 md:px-10 lg:px-20">
+//           <h1 className="text-4xl mb-6">Assist Me To Create Py-Chart</h1>
+//           <div className="boxes grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
+//               <p className="text-[18px]">
+//                 What is coding? <br />
+//                 How can we learn it?
+//               </p>
+//               <i className="absolute right-3 bottom-3 text-[18px]"><IoCodeSlash /></i>
+//             </div>
+//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
+//               <p className="text-[18px]">
+//                 Which is the red <br />
+//                 planet of the solar <br />
+//                 system?
+//               </p>
+//               <i className="absolute right-3 bottom-3 text-[18px]"><BiPlanet /></i>
+//             </div>
+//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
+//               <p className="text-[18px]">
+//                 In which year was Python <br />
+//                 invented?
+//               </p>
+//               <i className="absolute right-3 bottom-3 text-[18px]"><FaPython /></i>
+//             </div>
+//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
+//               <p className="text-[18px]">
+//                 How can we use <br />
+//                 AI for adoption?
+//               </p>
+//               <i className="absolute right-3 bottom-3 text-[18px]"><TbMessageChatbot /></i>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+
+//       <div className="bottom w-full flex flex-col items-center mt-4">
+//         <div className="inputBox w-full sm:w-3/4 md:w-2/3 lg:w-1/2 text-[15px] py-2 flex items-center bg-[#181818] rounded-[30px]">
+//           <input
+//             value={message}
+//             onChange={(e) => setMessage(e.target.value)}
+//             type="text"
+//             className="p-2 pl-4 bg-transparent flex-1 outline-none border-none"
+//             placeholder="Write your message here..."
+//             id="messageBox"
+//           />
+//           {message === '' ? (
+//             ''
+//           ) : (
+//             <i
+//               className="text-green-500 text-[20px] mr-4 cursor-pointer"
+//               onClick={hitRequest}
+//             >
+//               <IoSend />
+//             </i>
+//           )}
+//         </div>
+//         <p className="text-[gray] text-[14px] my-4 text-center">
+//           AssistMe is developed by Rohan Pawar. This is an open-source project and
+//           made with ❤️.
+//         </p>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Example;
 import React, { useState } from 'react';
 import './Example.css';
 import { IoCodeSlash, IoSend } from 'react-icons/io5';
@@ -592,7 +1039,7 @@ const Example = () => {
   const [messages, setMessages] = useState([]);
   const [tokenData, setTokenData] = useState(null);
   const [count, setCount] = useState(0);
-  const chartRef = React.useRef(null); // Reference to the chart
+  const chartRef = React.useRef(null);
 
   const hitRequest = () => {
     if (message) {
@@ -623,10 +1070,11 @@ const Example = () => {
       setCount(count + 1);
       console.log(responseText);
 
-      // Analyze the response text for numerical data
       const numericalData = extractNumericalData(responseText);
       if (numericalData) {
         setTokenData(numericalData);
+      } else {
+        console.log('No numerical data found in the response.');
       }
     } catch (error) {
       console.error('Error generating response:', error);
@@ -634,7 +1082,6 @@ const Example = () => {
     }
   };
 
-  // Function to extract numerical data from the response text
   const extractNumericalData = (text) => {
     const numberRegex = /(\d+\.?\d*)\s?(%|points|runs|goals|votes|ratio|out of|total)?/g;
     const matches = [];
@@ -673,10 +1120,9 @@ const Example = () => {
     setCount(0);
   };
 
-  // Function to download the pie chart as an image
   const downloadChart = () => {
     if (chartRef.current) {
-      const imageUrl = chartRef.current.toBase64Image(); // Safely get base64 image
+      const imageUrl = chartRef.current.toBase64Image();
       if (imageUrl) {
         const link = document.createElement('a');
         link.download = 'pie-chart.png';
@@ -711,10 +1157,9 @@ const Example = () => {
             ))}
           </div>
 
-          {/* Display Pie Chart if tokenData is available */}
+          {/* Display Pie Chart */}
           {tokenData && (
             <div className="mt-4">
-              <h3 className="text-xl mb-2">Numerical Data Analysis</h3>
               <div className="relative">
                 <Pie ref={chartRef} data={tokenData} />
                 <button
@@ -723,6 +1168,23 @@ const Example = () => {
                 >
                   Download Chart
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Display "Numeric Data Analysis" section */}
+          {tokenData && (
+            <div className="mt-4">
+              <h3 className="text-xl mb-2">Numeric Data Analysis</h3>
+              <div className="bg-[#202020] p-4 rounded-md">
+                <p className="text-gray-300">Here's a breakdown of the numerical data found:</p>
+                <ul className="list-disc pl-5 mt-2">
+                  {tokenData.labels.map((label, index) => (
+                    <li key={index}>
+                      {label}: {tokenData.datasets[0].data[index]}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           )}
@@ -777,17 +1239,9 @@ const Example = () => {
           {message === '' ? (
             ''
           ) : (
-            <i
-              className="text-green-500 text-[20px] mr-4 cursor-pointer"
-              onClick={hitRequest}
-            >
-              <IoSend />
-            </i>
+            <i onClick={hitRequest} className="cursor-pointer text-[20px]"><IoSend /></i>
           )}
         </div>
-        <p className="text-[gray] text-[14px] my-4 text-center">
-          AssistMe is developed by Rohan Pawar. This AI uses the Gemini API to provide responses.
-        </p>
       </div>
     </div>
   );
