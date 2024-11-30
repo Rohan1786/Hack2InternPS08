@@ -1,3 +1,48 @@
+AI-Powered Data Visualization Web App
+# Project Overview
+
+This web application allows users to create data visualizations using the power of AI. Users can sign in with Google and access a user-friendly, two-step wizard to generate customized charts.
+
+## Key Features
+
+User Authentication: Sign in with Google for secure access.
+AI Integration: Utilizes OpenAI or similar API for natural language processing and chart generation.
+Data Visualization: Interactive charts using Chart.js, D3.js, or Highcharts.
+Customization Options: Customize titles, colors, and legends for personalized visualizations.
+Export Options: Export visualizations as code or downloadable images.
+## Example Use Case
+
+Prompt: "Create a pie chart illustrating voter distribution for the 2024 US elections."
+
+The app generates a pie chart with slices for Democratic and Republican parties. Users can then customize:
+
+Title: "2024 US Presidential Election Voter Preferences"
+Colors
+Legend
+## Tech Stack
+
+Frontend: React with Next.js or SvelteKit
+Styling: Tailwind CSS, SCSS, or Plain CSS
+Authentication: Clerk, Auth0, or similar service
+AI Integration: OpenAI API, Gemini API, or similar service
+Data Visualization: Chart.js, D3.js, or Highcharts
+## Project Structure
+
+Authentication Module: Handles user sign-in and session management.
+Chart Wizard:
+Step 1: Input prompt to generate a chart.
+Step 2: Customize visualization properties.
+Export Functionality: Allows exporting the visualization as code or an image.
+UI Design: Responsive layout using Tailwind CSS or custom styling.
+## Deliverables
+
+Live Demo: Hosted on Vercel or Netlify.
+GitHub Repository: Clean, well-documented code.
+Project Video: 2-minute walkthrough video.
+
+
+<video controls src="rohans.mp4" title="Title"></video>
+
 
 # Getting Started with Create React App
 
@@ -70,35 +115,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-Web App for AI-Powered Data Visualizations
-Project Overview
-This web application allows users to create data visualizations using AI. Users can sign in with Google and access a user-friendly, two-step wizard to generate customized charts. In the first step, users input a prompt to create a visualization. In the second step, they can adjust chart settings such as titles, colors, and legends, and export the final output as code or an image.
-
-Key Features
-User Authentication: Sign in with Google to access the main application.
-AI Integration: Utilizes OpenAI or a similar AI API for natural language processing and chart generation.
-Data Visualization: Interactive charts using Chart.js, D3.js, or Highcharts.
-Customization Options: Customizable titles, colors, and legends for personalizing visualizations.
-Export Options: Export visualizations as code or downloadable images.
-Example Use Case
-Create a pie chart illustrating voter distribution for the 2024 US elections:
-
-Democratic Party: 52%
-Republican Party: 48%
-Tech Stack
-Frontend: React with Next.js or SvelteKit
-Styling: Tailwind CSS, SCSS, or Plain CSS
-Authentication: Clerk, Auth0, or a similar service
-AI Integration: OpenAI API, Gemini API, or a similar service
-Data Visualization: Chart.js, D3.js, or Highcharts
-Project Structure
-Authentication Module: Handles user sign-in and session management.
-Chart Wizard:
-Step 1: Input prompt to generate a chart.
-Step 2: Customize visualization properties.
-Export Functionality: Allows exporting the visualization as code or an image.
-UI Design: Responsive layout using Tailwind CSS or custom styling.
-Deliverables
-Live Demo: Hosted on platforms like Vercel or Netlify for a seamless user experience.
-GitHub Repository: Clean, well-documented code with comments and a clear project structure.
-Project Video: A 2-minute walkthrough video explaining the project and its features.
