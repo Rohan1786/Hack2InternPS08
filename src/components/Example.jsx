@@ -1141,10 +1141,10 @@ const Example = () => {
           {/* Display Pie Chart */}
           {chartData && (
             <div className="mt-4">
-              <div className="relative">
+              <div className="">
                 <Pie ref={chartRef} data={chartData} />
                 <button
-                  className="absolute top-0 right-0 bg-[#201f1f] p-2 rounded cursor-pointer"
+                  className="w-23 h-20 top-0 right-0 bg-[#201f1f] p-2 rounded cursor-pointer"
                   onClick={downloadChart}
                 >
                   Download Chart
