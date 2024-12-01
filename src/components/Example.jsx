@@ -1014,13 +1014,11 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
-ChartJS.register(Title, Tooltip, Legend);
-
 const Example = () => {
   const [message, setMessage] = useState('');
   const [isResponseScreen, setIsResponseScreen] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [tokenData, setTokenData] = useState(null);
+  const [chartData, setChartData] = useState(null);
   const [count, setCount] = useState(0);
   const chartRef = React.useRef(null);
 
@@ -1044,7 +1042,7 @@ const Example = () => {
       const fullMessage = msg + customMessage; // Combine user message with the custom message
       const result = await model.generateContent(fullMessage);
 
-      const responseText = result.response.text();
+      const responseText = await result.response.text();
       const newMessages = [
         ...messages,
         { type: 'userMsg', text: msg },
@@ -1057,11 +1055,12 @@ const Example = () => {
       setCount(count + 1);
       console.log(responseText);
 
-      const numericalData = extractNumericalData(responseText);
-      if (numericalData) {
-        setTokenData(numericalData);
+      // Parse and validate JSON data
+      const jsonData = parseJSONResponse(responseText);
+      if (jsonData) {
+        setChartData(jsonData);
       } else {
-        console.log('No numerical data found in the response.');
+        console.log('Invalid or no JSON data found in the response.');
       }
     } catch (error) {
       console.error('Error generating response:', error);
@@ -1069,41 +1068,36 @@ const Example = () => {
     }
   };
 
-  const extractNumericalData = (text) => {
-    const numberRegex = /(\d+\.?\d*)\s?(%|points|runs|goals|votes|ratio|out of|total)?/g;
-    const matches = [];
-    let match;
+  const parseJSONResponse = (text) => {
+    try {
+      const jsonData = JSON.parse(text);
+      if (jsonData.labels && Array.isArray(jsonData.labels) && jsonData.values && Array.isArray(jsonData.values) && jsonData.labels.length === jsonData.values.length) {
+        const backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#FF5733', '#33FF57', '#5A33FF', '#FF33B5'].slice(0, jsonData.labels.length);
 
-    while ((match = numberRegex.exec(text)) !== null) {
-      const value = match[1];
-      const label = match[2] ? match[2] : 'Count';
-      matches.push({ label, value: parseFloat(value) });
+        return {
+          labels: jsonData.labels,
+          datasets: [
+            {
+              label: 'Generated Data',
+              data: jsonData.values,
+              backgroundColor: backgroundColors,
+            },
+          ],
+        };
+      } else {
+        console.error('Invalid JSON format');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return null;
     }
-
-    if (matches.length > 0) {
-      const labels = matches.map((item) => item.label);
-      const data = matches.map((item) => item.value);
-      const backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#FF5733', '#33FF57', '#5A33FF', '#FF33B5'];
-
-      return {
-        labels,
-        datasets: [
-          {
-            label: 'Numerical Data',
-            data,
-            backgroundColor: backgroundColors.slice(0, matches.length),
-          },
-        ],
-      };
-    }
-
-    return null;
   };
 
   const newChat = () => {
     setIsResponseScreen(false);
     setMessages([]);
-    setTokenData(null);
+    setChartData(null);
     setCount(0);
   };
 
@@ -1124,11 +1118,11 @@ const Example = () => {
   };
 
   return (
-    <div className="container w-full min-h-screen overflow-x-hidden bg-[#0E0E0E] text-white">
+    <div className="container top-16 p-5 w-full min-h-screen overflow-x-hidden bg-[#0E0E0E] text-white">
       {isResponseScreen ? (
         <div className="h-[80vh] px-4 md:px-10 lg:px-20">
           <div className="header pt-[25px] flex items-center justify-between">
-            <h2 className="text-2xl">AssistMe</h2>
+            <h2 className="text-2xl">Assist Me</h2>
             <button
               id="newChatBtn"
               className="bg-[#181818] p-2 md:p-3 rounded-[30px] cursor-pointer text-sm md:text-[14px] px-4 md:px-8"
@@ -1145,10 +1139,10 @@ const Example = () => {
           </div>
 
           {/* Display Pie Chart */}
-          {tokenData && (
+          {chartData && (
             <div className="mt-4">
               <div className="relative">
-                <Pie ref={chartRef} data={tokenData} />
+                <Pie ref={chartRef} data={chartData} />
                 <button
                   className="absolute top-0 right-0 bg-[#201f1f] p-2 rounded cursor-pointer"
                   onClick={downloadChart}
@@ -1160,15 +1154,15 @@ const Example = () => {
           )}
 
           {/* Display "Numeric Data Analysis" section */}
-          {tokenData && (
+          {chartData && (
             <div className="mt-4">
               <h3 className="text-xl mb-2">Numeric Data Analysis</h3>
               <div className="bg-[#202020] p-4 rounded-md">
-                <p className="text-gray-300">Here's a breakdown of the numerical data found:</p>
+                <p className="text-gray-300">Here's a breakdown of the data:</p>
                 <ul className="list-disc pl-5 mt-2">
-                  {tokenData.labels.map((label, index) => (
+                  {chartData.labels.map((label, index) => (
                     <li key={index}>
-                      {label}: {tokenData.datasets[0].data[index]}
+                      {label}: {chartData.datasets[0].data[index]}
                     </li>
                   ))}
                 </ul>
@@ -1178,7 +1172,7 @@ const Example = () => {
         </div>
       ) : (
         <div className="middle h-[80vh] flex flex-col items-center justify-center px-4 md:px-10 lg:px-20">
-          <h1 className="text-4xl mb-6">Assist Me To Create Py-Chart</h1>
+          <h1 className="text-4xl mb-6">Assist Me To Create Pie-Chart</h1>
           <div className="boxes grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
               <p className="text-[18px]">
@@ -1210,23 +1204,23 @@ const Example = () => {
               <i className="absolute right-3 bottom-3 text-[18px]"><TbMessageChatbot /></i>
             </div>
           </div>
+
+          <div className="input flex mt-10 relative w-full md:w-[75%] lg:w-[55%]">
+            <input
+              className="p-4 w-full bg-[#202020] text-white outline-none border border-[#202020] focus:border-[#FF5733] transition-all rounded"
+              placeholder="Start a new conversation"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <i
+              className="absolute top-3 right-3 text-[#FF5733] text-[18px] cursor-pointer"
+              onClick={hitRequest}
+            >
+              <IoSend />
+            </i>
+          </div>
         </div>
       )}
-
-      <div className="bottom w-full flex flex-col items-center mt-4">
-        <div className="inputBox w-full sm:w-3/4 md:w-2/3 lg:w-1/2 flex items-center justify-between">
-          <input
-            className="inputField bg-[#1D1D1D] text-white p-2 rounded-lg"
-            type="text"
-            value={message}
-            placeholder="Type your message here..."
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button className="sendBtn bg-[#202020] p-2 rounded" onClick={hitRequest}>
-            <IoSend className="text-white" size={24} />
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
