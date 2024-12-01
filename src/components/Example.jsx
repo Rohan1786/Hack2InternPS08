@@ -1207,7 +1207,7 @@ const Example = () => {
 
           <div className="input flex mt-10 relative w-full md:w-[75%] lg:w-[55%]">
             <input
-              className="p-4 w-full bg-[#202020] text-white outline-none border border-[#202020] focus:border-[#FF5733] transition-all rounded"
+              className="p-4 w-full bg-[#202020] text-gray-400 outline-none border border-[#202020] focus:border-[#FF5733] transition-all rounded"
               placeholder="Give me prompt so i can easily create a pie chart for you"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
