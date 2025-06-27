@@ -419,7 +419,7 @@ const Dashboard = () => {
                 <h3 className="text-xl font-semibold mb-3">Project Stats</h3>
                 <div className="space-y-4">
                   {[
-                    { label: "Team Members", value: "4", icon: "👥" },
+                    { label: "Individual Participation", value: "1", icon: "🙋" },
                     { label: "Days to Build", value: "7", icon: "⏱️" },
                     { label: "Code Commits", value: "128", icon: "💻" },
                     { label: "Features", value: "15+", icon: "✨" }

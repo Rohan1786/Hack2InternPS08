@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { auth } from "../../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { useMediaQuery } from 'react-responsive';
 
 const AuthContext = React.createContext();
 
@@ -15,61 +14,36 @@ export function AuthProvider({ children }) {
   const [isEmailUser, setIsEmailUser] = useState(false);
   const [isGoogleUser, setIsGoogleUser] = useState(false);
   const [loading, setLoading] = useState(true);
-  
-  // Mobile detection
-  const isMobile = useMediaQuery({ maxWidth: 767 });
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
-
-  useEffect(() => {
-    setIsMobileDevice(isMobile);
-  }, [isMobile]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, initializeUser);
     return unsubscribe;
-  }, []);
+  }, [auth]); // Trigger only on auth changes
 
   async function initializeUser(user) {
     if (user) {
-      setCurrentUser({ 
-        ...user,
-        // Add mobile-friendly user properties
-        displayName: user.displayName || user.email?.split('@')[0] || 'User',
-        photoURL: user.photoURL || (isMobileDevice ? '/default-mobile-avatar.png' : '/default-avatar.png')
-      });
+      setCurrentUser({ ...user });
 
+      // Check if provider is email and password login
       const isEmail = user.providerData.some(
         (provider) => provider.providerId === "password"
       );
       setIsEmailUser(isEmail);
 
+      // Check if the auth provider is Google
       const isGoogle = user.providerData.some(
         (provider) => provider.providerId === "google.com"
       );
       setIsGoogleUser(isGoogle);
 
       setUserLoggedIn(true);
-      
-      // Mobile-specific initialization
-      if (isMobileDevice) {
-        console.log("Mobile user detected");
-        // You can add mobile-specific user initialization here
-      }
     } else {
       setCurrentUser(null);
       setUserLoggedIn(false);
     }
+
     setLoading(false);
   }
-
-  // Mobile-friendly auth functions
-  const mobileSignOut = async () => {
-    if (isMobileDevice) {
-      // Add any mobile-specific signout logic
-      console.log("Mobile signout initiated");
-    }
-    return auth.signOut();
-  };
 
   const value = {
     userLoggedIn,
@@ -77,18 +51,11 @@ export function AuthProvider({ children }) {
     isGoogleUser,
     currentUser,
     setCurrentUser,
-    isMobileDevice,
-    signOut: mobileSignOut, // Mobile-friendly signout
-    // Add other mobile-friendly methods as needed
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && (
-        <div className={`app-container ${isMobileDevice ? 'mobile' : 'desktop'}`}>
-          {children}
-        </div>
-      )}
+      {!loading && children}
     </AuthContext.Provider>
   );
 }
