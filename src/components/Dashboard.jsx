@@ -420,9 +420,9 @@ const Dashboard = () => {
                 <div className="space-y-4">
                   {[
                     { label: "Individual Participation", value: "1", icon: "🙋" },
-                    { label: "Days to Build", value: "7", icon: "⏱️" },
-                    { label: "Code Commits", value: "128", icon: "💻" },
-                    { label: "Features", value: "15+", icon: "✨" }
+                    { label: "Days to Build", value: "1", icon: "⏱️" },
+                    { label: "Code Commits", value: "60+", icon: "💻" },
+                    { label: "Features", value: "5", icon: "✨" }
                   ].map((stat, index) => (
                     <div key={index} className="flex justify-between items-center">
                       <div className="flex items-center gap-3">
