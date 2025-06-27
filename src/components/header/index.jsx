@@ -17,7 +17,7 @@ const Header = () => {
                             to="/" 
                             className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors"
                         >
-                            YourLogo
+                            PieQ
                         </Link>
                     </div>
                     
