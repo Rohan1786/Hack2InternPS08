@@ -1,1016 +1,18 @@
-
-// import React, { useState } from 'react';
-// import './Example.css';
-// import { IoCodeSlash, IoSend } from 'react-icons/io5';
-// import { BiPlanet } from 'react-icons/bi';
-// import { FaPython } from 'react-icons/fa';
-// import { TbMessageChatbot } from 'react-icons/tb';
-// import { GoogleGenerativeAI } from '@google/generative-ai';
-// import { Pie } from 'react-chartjs-2';
-// import { Chart as ChartJS, Title, Tooltip, Legend } from 'chart.js';
-
-// ChartJS.register(Title, Tooltip, Legend);
-
-// const Example = () => {
-//   const [message, setMessage] = useState('');
-//   const [isResponseScreen, setIsResponseScreen] = useState(false);
-//   const [messages, setMessages] = useState([]);
-//   const [tokenData, setTokenData] = useState(null);
-//   const [count, setCount] = useState(0);
-//   const chartRef = React.useRef(null);
-
-//   const hitRequest = () => {
-//     if (message) {
-//       generateResponse(message);
-//     } else {
-//       alert('You must write something... !');
-//     }
-//   };
-
-//   const generateResponse = async (msg) => {
-//     if (!msg) return;
-
-//     try {
-//       const genAI = new GoogleGenerativeAI('AIzaSyDbXFeVo5nhLk-AbwPlx7eiivQLx--HPJs');
-//       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-//       const result = await model.generateContent(msg);
-
-//       const responseText = result.response.text();
-//       const newMessages = [
-//         ...messages,
-//         { type: 'userMsg', text: msg },
-//         { type: 'responseMsg', text: responseText },
-//       ];
-
-//       setMessages(newMessages);
-//       setIsResponseScreen(true);
-//       setMessage('');
-//       setCount(count + 1);
-//       console.log(responseText);
-
-//       const numericalData = extractNumericalData(responseText);
-//       if (numericalData) {
-//         setTokenData(numericalData);
-//       } else {
-//         console.log('No numerical data found in the response.');
-//       }
-//     } catch (error) {
-//       console.error('Error generating response:', error);
-//       alert('Something went wrong while generating the response.');
-//     }
-//   };
-
-//   const extractNumericalData = (text) => {
-//     const numberRegex = /(\d+\.?\d*)\s?(%|points|runs|goals|votes|ratio|out of|total)?/g;
-//     const matches = [];
-//     let match;
-
-//     while ((match = numberRegex.exec(text)) !== null) {
-//       const value = match[1];
-//       const label = match[2] ? match[2] : 'Count';
-//       matches.push({ label, value: parseFloat(value) });
-//     }
-
-//     if (matches.length > 0) {
-//       const labels = matches.map((item) => item.label);
-//       const data = matches.map((item) => item.value);
-//       const backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#FF5733', '#33FF57', '#5A33FF', '#FF33B5'];
-
-//       return {
-//         labels,
-//         datasets: [
-//           {
-//             label: 'Numerical Data',
-//             data,
-//             backgroundColor: backgroundColors.slice(0, matches.length),
-//           },
-//         ],
-//       };
-//     }
-
-//     return null;
-//   };
-
-//   const newChat = () => {
-//     setIsResponseScreen(false);
-//     setMessages([]);
-//     setTokenData(null);
-//     setCount(0);
-//   };
-
-//   const downloadChart = () => {
-//     if (chartRef.current) {
-//       const imageUrl = chartRef.current.toBase64Image();
-//       if (imageUrl) {
-//         const link = document.createElement('a');
-//         link.download = 'pie-chart.png';
-//         link.href = imageUrl;
-//         link.click();
-//       } else {
-//         console.error('Chart image could not be generated');
-//       }
-//     } else {
-//       console.error('Chart reference is not defined');
-//     }
-//   };
-
-//   return (
-//     <div className="container w-full min-h-screen overflow-x-hidden bg-[#0E0E0E] text-white">
-//       {isResponseScreen ? (
-//         <div className="h-[80vh] px-4 md:px-10 lg:px-20">
-//           <div className="header pt-[25px] flex items-center justify-between">
-//             <h2 className="text-2xl">AssistMe</h2>
-//             <button
-//               id="newChatBtn"
-//               className="bg-[#181818] p-2 md:p-3 rounded-[30px] cursor-pointer text-sm md:text-[14px] px-4 md:px-8"
-//               onClick={newChat}
-//             >
-//               New Chat
-//             </button>
-//           </div>
-
-//           <div className="messages mt-4">
-//             {messages.map((msg, index) => (
-//               <div key={index} className={`${msg.type} mb-2`}>{msg.text}</div>
-//             ))}
-//           </div>
-
-//           {/* Display Pie Chart */}
-//           {tokenData && (
-//             <div className="mt-4">
-//               <div className="relative">
-//                 <Pie ref={chartRef} data={tokenData} />
-//                 <button
-//                   className="absolute top-0 right-0 bg-[#201f1f] p-2 rounded cursor-pointer"
-//                   onClick={downloadChart}
-//                 >
-//                   Download Chart
-//                 </button>
-//               </div>
-//             </div>
-//           )}
-
-//           {/* Display "Numeric Data Analysis" section */}
-//           {tokenData && (
-//             <div className="mt-4">
-//               <h3 className="text-xl mb-2">Numeric Data Analysis</h3>
-//               <div className="bg-[#202020] p-4 rounded-md">
-//                 <p className="text-gray-300">Here's a breakdown of the numerical data found:</p>
-//                 <ul className="list-disc pl-5 mt-2">
-//                   {tokenData.labels.map((label, index) => (
-//                     <li key={index}>
-//                       {label}: {tokenData.datasets[0].data[index]}
-//                     </li>
-//                   ))}
-//                 </ul>
-//               </div>
-//             </div>
-//           )}
-//         </div>
-//       ) : (
-//         <div className="middle h-[80vh] flex flex-col items-center justify-center px-4 md:px-10 lg:px-20">
-//           <h1 className="text-4xl mb-6">Assist Me To Create Py-Chart</h1>
-//           <div className="boxes grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-//               <p className="text-[18px]">
-//                 What is coding? <br />
-//                 How can we learn it?
-//               </p>
-//               <i className="absolute right-3 bottom-3 text-[18px]"><IoCodeSlash /></i>
-//             </div>
-//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-//               <p className="text-[18px]">
-//                 Which is the red <br />
-//                 planet of the solar <br />
-//                 system?
-//               </p>
-//               <i className="absolute right-3 bottom-3 text-[18px]"><BiPlanet /></i>
-//             </div>
-//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-//               <p className="text-[18px]">
-//                 In which year was Python <br />
-//                 invented?
-//               </p>
-//               <i className="absolute right-3 bottom-3 text-[18px]"><FaPython /></i>
-//             </div>
-//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-//               <p className="text-[18px]">
-//                 How can we use <br />
-//                 AI for adoption?
-//               </p>
-//               <i className="absolute right-3 bottom-3 text-[18px]"><TbMessageChatbot /></i>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       <div className="bottom w-full flex flex-col items-center mt-4">
-//         <div className="inputBox w-full sm:w-3/4 md:w-2/3 lg:w-1/2 text-[15px] py-2 flex items-center bg-[#181818] rounded-[30px]">
-//           <input
-//             value={message}
-//             onChange={(e) => setMessage(e.target.value)}
-//             type="text"
-//             className="p-2 pl-4 bg-transparent flex-1 outline-none border-none"
-//             placeholder="Write your message here..."
-//             id="messageBox"
-//           />
-//           {message === '' ? (
-//             ''
-//           ) : (
-//             <i onClick={hitRequest} className="cursor-pointer text-[20px]"><IoSend /></i>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Example;
-
-
-// import React, { useState } from 'react';
-// import './Example.css';
-// import { IoCodeSlash, IoSend } from 'react-icons/io5';
-// import { BiPlanet } from 'react-icons/bi';
-// import { FaPython } from 'react-icons/fa';
-// import { TbMessageChatbot } from 'react-icons/tb';
-// import { GoogleGenerativeAI } from '@google/generative-ai';
-// import { Pie } from 'react-chartjs-2';
-// import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
-
-// // Register all required components for Chart.js
-// ChartJS.register(Title, Tooltip, Legend, ArcElement);
-
-// const Example = () => {
-//   const [message, setMessage] = useState('');
-//   const [isResponseScreen, setIsResponseScreen] = useState(false);
-//   const [messages, setMessages] = useState([]);
-//   const [tokenData, setTokenData] = useState(null);
-//   const [count, setCount] = useState(0);
-//   const chartRef = React.useRef(null);
-
-//   const hitRequest = () => {
-//     if (message) {
-//       generateResponse(message);
-//     } else {
-//       alert('You must write something... !');
-//     }
-//   };
-
-//   const generateResponse = async (msg) => {
-//     if (!msg) return;
-
-//     try {
-//       const genAI = new GoogleGenerativeAI('AIzaSyDbXFeVo5nhLk-AbwPlx7eiivQLx--HPJs');
-//       // const genAI = new GoogleGenerativeAI('4dc47aa03e324484bae96894b62c3bbf');
-//       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-//       const result = await model.generateContent(msg);
-
-//       const responseText = result.response.text();
-//       const newMessages = [
-//         ...messages,
-//         { type: 'userMsg', text: msg },
-//         { type: 'responseMsg', text: responseText },
-//       ];
-
-//       setMessages(newMessages);
-//       setIsResponseScreen(true);
-//       setMessage('');
-//       setCount(count + 1);
-//       console.log(responseText);
-
-//       const numericalData = extractNumericalData(responseText);
-//       if (numericalData) {
-//         setTokenData(numericalData);
-//       } else {
-//         console.log('No numerical data found in the response.');
-//       }
-//     } catch (error) {
-//       console.error('Error generating response:', error);
-//       alert('Something went wrong while generating the response.');
-//     }
-//   };
-
-//   const extractNumericalData = (text) => {
-//     const numberRegex = /(\d+\.?\d*)\s?(%|points|runs|goals|votes|ratio|out of|total)?/g;
-//     const matches = [];
-//     let match;
-
-//     while ((match = numberRegex.exec(text)) !== null) {
-//       const value = match[1];
-//       const label = match[2] ? match[2] : 'Count';
-//       matches.push({ label, value: parseFloat(value) });
-//     }
-
-//     if (matches.length > 0) {
-//       const labels = matches.map((item) => item.label);
-//       const data = matches.map((item) => item.value);
-//       const backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#FF5733', '#33FF57', '#5A33FF', '#FF33B5'];
-
-//       return {
-//         labels,
-//         datasets: [
-//           {
-//             label: 'Numerical Data',
-//             data,
-//             backgroundColor: backgroundColors.slice(0, matches.length),
-//           },
-//         ],
-//       };
-//     }
-
-//     return null;
-//   };
-
-//   const newChat = () => {
-//     setIsResponseScreen(false);
-//     setMessages([]);
-//     setTokenData(null);
-//     setCount(0);
-//   };
-
-//   const downloadChart = () => {
-//     if (chartRef.current) {
-//       const imageUrl = chartRef.current.toBase64Image();
-//       if (imageUrl) {
-//         const link = document.createElement('a');
-//         link.download = 'pie-chart.png';
-//         link.href = imageUrl;
-//         link.click();
-//       } else {
-//         console.error('Chart image could not be generated');
-//       }
-//     } else {
-//       console.error('Chart reference is not defined');
-//     }
-//   };
-
-//   return (
-//     <div className="container top-16 mx-14 px-2 w-full min-h-screen overflow-x-hidden bg-[#0E0E0E] text-white">
-//       {isResponseScreen ? (
-//         <div className="h-[80vh] px-4 md:px-10 lg:px-20">
-//           <div className="header pt-[25px] flex items-center justify-between">
-//             <h2 className="text-2xl">AssistMe</h2>
-//             <button
-//               id="newChatBtn"
-//               className="bg-[#181818] p-2 md:p-3 rounded-[30px] cursor-pointer text-sm md:text-[14px] px-4 md:px-8"
-//               onClick={newChat}
-//             >
-//               New Chat
-//             </button>
-//           </div>
-
-//           <div className="messages mt-4">
-//             {messages.map((msg, index) => (
-//               <div key={index} className={`${msg.type} mb-2`}>{msg.text}</div>
-//             ))}
-//           </div>
-
-//           {/* Display Pie Chart */}
-//           {tokenData && (
-//             <div className="mt-4">
-//               <div className="relative">
-//                 <Pie ref={chartRef} data={tokenData} />
-//                 <button
-//                   className="absolute top-0 right-0 bg-[#201f1f] p-2 rounded cursor-pointer"
-//                   onClick={downloadChart}
-//                 >
-//                   Download Chart
-//                 </button>
-//               </div>
-//             </div>
-//           )}
-
-//           {/* Display "Numeric Data Analysis" section */}
-//           {tokenData && (
-//             <div className="mt-4">
-//               <h3 className="text-xl mb-2">Numeric Data Analysis</h3>
-//               <div className="bg-[#202020] p-4 rounded-md">
-//                 <p className="text-gray-300">Here's a breakdown of the numerical data found:</p>
-//                 <ul className="list-disc pl-5 mt-2">
-//                   {tokenData.labels.map((label, index) => (
-//                     <li key={index}>
-//                       {label}: {tokenData.datasets[0].data[index]}
-//                     </li>
-//                   ))}
-//                 </ul>
-//               </div>
-//             </div>
-//           )}
-//         </div>
-//       ) : (
-//         <div className="middle h-[80vh] flex flex-col items-center justify-center px-4 md:px-10 lg:px-20">
-//           <h1 className="text-4xl mb-6">Assist Me To Create Pie-Chart</h1>
-//           <div className="boxes grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-//               <p className="text-[18px]">
-//                 What is coding? <br />
-//                 How can we learn it?
-//               </p>
-//               <i className="absolute right-3 bottom-3 text-[18px]"><IoCodeSlash /></i>
-//             </div>
-//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-//               <p className="text-[18px]">
-//                 Which is the red <br />
-//                 planet of the solar <br />
-//                 system?
-//               </p>
-//               <i className="absolute right-3 bottom-3 text-[18px]"><BiPlanet /></i>
-//             </div>
-//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-//               <p className="text-[18px]">
-//                 In which year was Python <br />
-//                 invented?
-//               </p>
-//               <i className="absolute right-3 bottom-3 text-[18px]"><FaPython /></i>
-//             </div>
-//             <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-//               <p className="text-[18px]">
-//                 How can we use <br />
-//                 AI for adoption?
-//               </p>
-//               <i className="absolute right-3 bottom-3 text-[18px]"><TbMessageChatbot /></i>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       <div className="bottom w-full flex flex-col items-center mt-4">
-//         <div className="inputBox w-full sm:w-3/4 md:w-2/3 lg:w-1/2 text-[15px] flex items-center justify-between border rounded-md">
-//           <input
-//             type="text"
-//             placeholder="Send your question..."
-//             value={message}
-//             onChange={(e) => setMessage(e.target.value)}
-//             className="bg-transparent outline-none w-full p-3 border-none"
-//           />
-//           <i
-//             className="px-5 cursor-pointer text-[#a0a0a0]"
-//             onClick={hitRequest}
-//           >
-//             <IoSend />
-//           </i>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Example;
-// import React, { useState, useEffect, useRef } from 'react';
-// import './Example.css';
-// import { IoSend } from 'react-icons/io5';
-// import { GoogleGenerativeAI } from '@google/generative-ai';
-
-// // Load Google Charts
-// const loadGoogleCharts = () => {
-//   const script = document.createElement('script');
-//   script.src = 'https://www.gstatic.com/charts/loader.js';
-//   script.async = true;
-//   script.onload = () => {
-//     window.google.charts.load('current', { packages: ['corechart'] });
-//     window.google.charts.setOnLoadCallback(() => console.log('Google Charts Loaded'));
-//   };
-//   document.body.appendChild(script);
-// };
-
-// const Example = () => {
-//   const [message, setMessage] = useState('');
-//   const [messages, setMessages] = useState([]);
-//   const [chartData, setChartData] = useState(null);
-//   const chartRef = useRef(null);
-
-//   useEffect(() => {
-//     loadGoogleCharts();
-//   }, []);
-
-//   const API_KEY = 'AIzaSyDbXFeVo5nhLk-AbwPlx7eiivQLx--HPJs'; // Replace with your API Key
-//   const genAI = new GoogleGenerativeAI(API_KEY);
-//   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-//   const handleSendMessage = async () => {
-//     if (!message.trim()) return alert('Please enter a message.');
-
-//     const userMsg = { type: 'user', text: message };
-//     setMessages((prev) => [...prev, userMsg]);
-
-//     const processingMsg = { type: 'bot', text: 'Thinking...' };
-//     setMessages((prev) => [...prev, processingMsg]);
-
-//     try {
-//       const chatQuery = `
-//         ${message}
-//         Generate data in JSON format:
-//         {
-//           "labels": ["Label1", "Label2", ...],
-//           "values": [Value1, Value2, ...]
-//         }
-//         Only provide raw JSON, no extra text.
-//       `;
-//       const response = await model.startChat({ history: [], generationConfig: { maxOutputTokens: 2000 } }).sendMessage(chatQuery);
-
-//       const jsonResponse = response.response.candidates[0].content;
-//       const parsedData = JSON.parse(jsonResponse);
-
-//       setChartData(parsedData);
-//       setMessages((prev) => prev.filter((msg) => msg.text !== 'Thinking...'));
-
-//       const botMsg = { type: 'bot', text: 'Here is your chart!' };
-//       setMessages((prev) => [...prev, botMsg]);
-
-//       drawChart(parsedData);
-//     } catch (error) {
-//       console.error('Error generating response:', error);
-//       setMessages((prev) => prev.filter((msg) => msg.text !== 'Thinking...'));
-//       setMessages((prev) => [...prev, { type: 'bot', text: 'Error generating response.' }]);
-//     }
-//     setMessage('');
-//   };
-
-//   const drawChart = (data) => {
-//     if (!window.google || !data) return;
-
-//     const chartData = new window.google.visualization.DataTable();
-//     chartData.addColumn('string', 'Label');
-//     chartData.addColumn('number', 'Value');
-//     data.labels.forEach((label, index) => chartData.addRow([label, data.values[index]]));
-
-//     const options = {
-//       title: 'Generated Chart',
-//       pieHole: 0.4,
-//       backgroundColor: '#0E0E0E',
-//       titleTextStyle: { color: '#FFFFFF' },
-//     };
-
-//     const chart = new window.google.visualization.PieChart(chartRef.current);
-//     chart.draw(chartData, options);
-//   };
-
-//   return (
-//     <div className="container text-white bg-[#0E0E0E] min-h-screen p-4">
-//       <h1 className="text-2xl mb-4">AssistMe - Dynamic Chart Generator</h1>
-//       <div className="chatbox mb-4">
-//         {messages.map((msg, index) => (
-//           <div
-//             key={index}
-//             className={`message ${msg.type === 'user' ? 'user-message' : 'bot-message'}`}
-//           >
-//             {msg.text}
-//           </div>
-//         ))}
-//       </div>
-//       <div className="input-box flex items-center">
-//         <input
-//           type="text"
-//           placeholder="Ask something..."
-//           value={message}
-//           onChange={(e) => setMessage(e.target.value)}
-//           className="flex-1 p-2 rounded bg-[#181818] text-white"
-//         />
-//         <button onClick={handleSendMessage} className="p-2 ml-2 bg-[#1f1f1f] rounded text-white">
-//           <IoSend />
-//         </button>
-//       </div>
-//       <div className="chart-container mt-4">
-//         <div ref={chartRef} className="chart"></div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Example;
-
-// import React, { useState, useEffect, useRef } from 'react';
-// import './Example.css';
-// import { IoSend } from 'react-icons/io5';
-
-// // Load Google Charts
-// const loadGoogleCharts = () => {
-//   return new Promise((resolve, reject) => {
-//     const script = document.createElement('script');
-//     script.src = 'https://www.gstatic.com/charts/loader.js';
-//     script.async = true;
-//     script.onload = () => {
-//       window.google.charts.load('current', { packages: ['corechart'] });
-//       window.google.charts.setOnLoadCallback(() => resolve());
-//     };
-//     script.onerror = reject;
-//     document.body.appendChild(script);
-//   });
-// };
-
-// const Example = () => {
-//   const [message, setMessage] = useState('');
-//   const [messages, setMessages] = useState([]);
-//   const [chartData, setChartData] = useState(null);
-//   const chartRef = useRef(null);
-
-//   useEffect(() => {
-//     loadGoogleCharts().then(() => console.log('Google Charts Loaded'));
-//   }, []);
-
-//   const handleSendMessage = async () => {
-//     if (!message.trim()) return alert('Please enter a message.');
-
-//     const userMsg = { type: 'user', text: message };
-//     setMessages((prev) => [...prev, userMsg]);
-
-//     const processingMsg = { type: 'bot', text: 'Thinking...' };
-//     setMessages((prev) => [...prev, processingMsg]);
-
-//     try {
-//       // Simulated API response
-//       const simulatedResponse = `
-//         {
-//           "labels": ["Category A", "Category B", "Category C"],
-//           "values": [30, 50, 20]
-//         }
-//       `;
-
-//       const parsedData = JSON.parse(simulatedResponse);
-//       setChartData(parsedData);
-
-//       setMessages((prev) =>
-//         prev.filter((msg) => msg.text !== 'Thinking...')
-//       );
-
-//       const botMsg = { type: 'bot', text: 'Here is your chart!' };
-//       setMessages((prev) => [...prev, botMsg]);
-
-//       drawChart(parsedData);
-//     } catch (error) {
-//       console.error('Error generating response:', error);
-//       setMessages((prev) =>
-//         prev.filter((msg) => msg.text !== 'Thinking...')
-//       );
-//       setMessages((prev) => [...prev, { type: 'bot', text: 'Error generating response.' }]);
-//     }
-//     setMessage('');
-//   };
-
-//   const drawChart = (data) => {
-//     if (!window.google || !data) return;
-
-//     const chartData = new window.google.visualization.DataTable();
-//     chartData.addColumn('string', 'Label');
-//     chartData.addColumn('number', 'Value');
-//     data.labels.forEach((label, index) =>
-//       chartData.addRow([label, data.values[index]])
-//     );
-
-//     const options = {
-//       title: 'Generated Chart',
-//       pieHole: 0.4,
-//       backgroundColor: '#0E0E0E',
-//       titleTextStyle: { color: '#FFFFFF' },
-//     };
-
-//     const chart = new window.google.visualization.PieChart(chartRef.current);
-//     chart.draw(chartData, options);
-//   };
-
-//   return (
-//     <div className="container text-white bg-[#0E0E0E] min-h-screen p-4">
-//       <h1 className="text-2xl mb-4">AssistMe - Dynamic Chart Generator</h1>
-//       <div className="chatbox mb-4">
-//         {messages.map((msg, index) => (
-//           <div
-//             key={index}
-//             className={`message ${
-//               msg.type === 'user' ? 'user-message' : 'bot-message'
-//             }`}
-//           >
-//             {msg.text}
-//           </div>
-//         ))}
-//       </div>
-//       <div className="input-box flex items-center">
-//         <input
-//           type="text"
-//           placeholder="Ask something..."
-//           value={message}
-//           onChange={(e) => setMessage(e.target.value)}
-//           className="flex-1 p-2 rounded bg-[#181818] text-white"
-//         />
-//         <button
-//           onClick={handleSendMessage}
-//           className="p-2 ml-2 bg-[#1f1f1f] rounded text-white"
-//         >
-//           <IoSend />
-//         </button>
-//       </div>
-//       <div className="chart-container mt-4">
-//         <div ref={chartRef} className="chart"></div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Example;
-// import React, { useState, useEffect, useRef } from 'react';
-// import './Example.css';
-// import { IoSend } from 'react-icons/io5';
-
-// // Load Google Charts
-// const loadGoogleCharts = () => {
-//   return new Promise((resolve, reject) => {
-//     const script = document.createElement('script');
-//     script.src = 'https://www.gstatic.com/charts/loader.js';
-//     script.async = true;
-//     script.onload = () => {
-//       window.google.charts.load('current', { packages: ['corechart'] });
-//       window.google.charts.setOnLoadCallback(() => resolve());
-//     };
-//     script.onerror = reject;
-//     document.body.appendChild(script);
-//   });
-// };
-
-// const Example = () => {
-//   const [message, setMessage] = useState('');
-//   const [messages, setMessages] = useState([]);
-//   const [chartData, setChartData] = useState(null);
-//   const chartRef = useRef(null);
-
-//   // Load Google Charts on component mount
-//   useEffect(() => {
-//     loadGoogleCharts()
-//       .then(() => console.log('Google Charts Loaded'))
-//       .catch((error) => console.error('Error loading Google Charts:', error));
-//   }, []);
-
-//   const handleSendMessage = async () => {
-//     if (!message.trim()) return alert('Please enter a message.');
-
-//     // Add user message to the chat
-//     const userMsg = { type: 'user', text: message };
-//     setMessages((prev) => [...prev, userMsg]);
-
-//     // Show processing message
-//     const processingMsg = { type: 'bot', text: 'Thinking...' };
-//     setMessages((prev) => [...prev, processingMsg]);
-
-//     try {
-//       // Replace with your actual API endpoint
-//       const response = await fetch('https://your-chat-api-endpoint.com/chat', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ message }),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch response from API');
-//       }
-
-//       const data = await response.json();
-
-//       // Process the response data
-//       const parsedData = JSON.parse(data.chartResponse);
-
-//       // Update chart data
-//       setChartData(parsedData);
-
-//       // Remove processing message and add bot response
-//       setMessages((prev) => prev.filter((msg) => msg.text !== 'Thinking...'));
-//       const botMsg = { type: 'bot', text: 'Here is your chart!' };
-//       setMessages((prev) => [...prev, botMsg]);
-
-//       // Draw the chart
-//       drawChart(parsedData);
-//     } catch (error) {
-//       console.error('Error generating response:', error);
-//       setMessages((prev) => prev.filter((msg) => msg.text !== 'Thinking...'));
-//       setMessages((prev) => [
-//         ...prev,
-//         { type: 'bot', text: 'Error generating response.' },
-//       ]);
-//     }
-//     setMessage('');
-//   };
-
-//   const drawChart = (data) => {
-//     if (!window.google || !data) return;
-
-//     const chartData = new window.google.visualization.DataTable();
-//     chartData.addColumn('string', 'Label');
-//     chartData.addColumn('number', 'Value');
-//     data.labels.forEach((label, index) =>
-//       chartData.addRow([label, data.values[index]])
-//     );
-
-//     const options = {
-//       title: 'Generated Chart',
-//       pieHole: 0.4,
-//       backgroundColor: '#0E0E0E',
-//       titleTextStyle: { color: '#FFFFFF' },
-//     };
-
-//     const chart = new window.google.visualization.PieChart(chartRef.current);
-//     chart.draw(chartData, options);
-//   };
-
-//   return (
-//     <div className="container text-white bg-[#0E0E0E] min-h-screen p-4">
-//       <h1 className="text-2xl mb-4">AssistMe - Dynamic Chart Generator</h1>
-//       <div className="chatbox mb-4">
-//         {messages.map((msg, index) => (
-//           <div
-//             key={index}
-//             className={`message ${
-//               msg.type === 'user' ? 'user-message' : 'bot-message'
-//             }`}
-//           >
-//             {msg.text}
-//           </div>
-//         ))}
-//       </div>
-//       <div className="input-box flex items-center">
-//         <input
-//           type="text"
-//           placeholder="Ask something..."
-//           value={message}
-//           onChange={(e) => setMessage(e.target.value)}
-//           className="flex-1 p-2 rounded bg-[#181818] text-white"
-//         />
-//         <button
-//           onClick={handleSendMessage}
-//           className="p-2 ml-2 bg-[#1f1f1f] rounded text-white"
-//         >
-//           <IoSend />
-//         </button>
-//       </div>
-//       <div className="chart-container mt-4">
-//         <div ref={chartRef} className="chart"></div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Example;
-// Example.jsx
-// import React, { useState, useEffect, useRef } from 'react';
-// import './Example.css';
-// import { IoSend } from 'react-icons/io5';
-
-// // Load Google Charts
-// const loadGoogleCharts = () => {
-//   return new Promise((resolve, reject) => {
-//     const script = document.createElement('script');
-//     script.src = 'https://www.gstatic.com/charts/loader.js';
-//     script.async = true;
-//     script.onload = () => {
-//       window.google.charts.load('current', { packages: ['corechart'] });
-//       window.google.charts.setOnLoadCallback(() => resolve());
-//     };
-//     script.onerror = reject;
-//     document.body.appendChild(script);
-//   });
-// };
-
-// const Example = () => {
-//   const [message, setMessage] = useState('');
-//   const [messages, setMessages] = useState([]);
-//   const [chartData, setChartData] = useState(null);
-//   const chartRef = useRef(null);
-
-//   // Load Google Charts on component mount
-//   useEffect(() => {
-//     loadGoogleCharts()
-//       .then(() => console.log('Google Charts Loaded'))
-//       .catch((error) => console.error('Error loading Google Charts:', error));
-//   }, []);
-
-//   const handleSendMessage = async () => {
-//     if (!message.trim()) return alert('Please enter a message.');
-
-//     // Add user message to the chat
-//     const userMsg = { type: 'user', text: message };
-//     setMessages((prev) => [...prev, userMsg]);
-
-//     // Show processing message
-//     const processingMsg = { type: 'bot', text: 'Thinking...' };
-//     setMessages((prev) => [...prev, processingMsg]);
-
-//     try {
-//       // Replace with your actual API endpoint
-//       const response = await fetch('https://your-chat-api-endpoint.com/chat', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ message }),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error(`HTTP Error: ${response.status} - ${response.statusText}`);
-//       }
-
-//       const data = await response.json();
-
-//       if (!data || !data.chartResponse) {
-//         throw new Error('Invalid response format.');
-//       }
-
-//       // Process the response data
-//       const parsedData = JSON.parse(data.chartResponse);
-
-//       // Update chart data
-//       setChartData(parsedData);
-
-//       // Remove processing message and add bot response
-//       setMessages((prev) => prev.filter((msg) => msg.text !== 'Thinking...'));
-//       const botMsg = { type: 'bot', text: 'Here is your chart!' };
-//       setMessages((prev) => [...prev, botMsg]);
-
-//       // Draw the chart
-//       drawChart(parsedData);
-//     } catch (error) {
-//       console.error('Error generating response:', error);
-
-//       // Remove processing message and add error response
-//       setMessages((prev) => prev.filter((msg) => msg.text !== 'Thinking...'));
-//       setMessages((prev) => [
-//         ...prev,
-//         {
-//           type: 'bot',
-//           text: `Something went wrong: ${error.message || 'Please try again later.'}`,
-//         },
-//       ]);
-//     }
-//     setMessage('');
-//   };
-
-//   const drawChart = (data) => {
-//     if (!window.google || !data) return;
-
-//     const chartData = new window.google.visualization.DataTable();
-//     chartData.addColumn('string', 'Label');
-//     chartData.addColumn('number', 'Value');
-//     data.labels.forEach((label, index) =>
-//       chartData.addRow([label, data.values[index]])
-//     );
-
-//     const options = {
-//       title: 'Generated Chart',
-//       pieHole: 0.4,
-//       backgroundColor: '#0E0E0E',
-//       titleTextStyle: { color: '#FFFFFF' },
-//     };
-
-//     const chart = new window.google.visualization.PieChart(chartRef.current);
-//     chart.draw(chartData, options);
-//   };
-
-//   return (
-//     <div className="container text-white bg-[#0E0E0E] min-h-screen p-4">
-//       <h1 className="text-2xl mb-4">AssistMe - Dynamic Chart Generator</h1>
-//       <div className="chatbox mb-4">
-//         {messages.map((msg, index) => (
-//           <div
-//             key={index}
-//             className={`message ${
-//               msg.type === 'user' ? 'user-message' : 'bot-message'
-//             }`}
-//           >
-//             {msg.text}
-//           </div>
-//         ))}
-//       </div>
-//       <div className="input-box flex items-center">
-//         <input
-//           type="text"
-//           placeholder="Ask something..."
-//           value={message}
-//           onChange={(e) => setMessage(e.target.value)}
-//           className="flex-1 p-2 rounded bg-[#181818] text-white"
-//         />
-//         <button
-//           onClick={handleSendMessage}
-//           className="p-2 ml-2 bg-[#1f1f1f] rounded text-white"
-//         >
-//           <IoSend />
-//         </button>
-//       </div>
-//       <div className="chart-container mt-4">
-//         <div ref={chartRef} className="chart"></div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Example;
-
-import React, { useState } from 'react';
-import './Example.css';
-import { IoCodeSlash, IoSend } from 'react-icons/io5';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { IoCodeSlash, IoSend, IoDownload, IoAdd } from 'react-icons/io5';
 import { BiPlanet } from 'react-icons/bi';
 import { FaPython } from 'react-icons/fa';
-import { TbMessageChatbot } from 'react-icons/tb';
+import { TbMessageChatbot, TbChartPie } from 'react-icons/tb';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+} from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
@@ -1019,27 +21,52 @@ const Example = () => {
   const [isResponseScreen, setIsResponseScreen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [chartData, setChartData] = useState(null);
-  const [count, setCount] = useState(0);
-  const chartRef = React.useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [chartTitle, setChartTitle] = useState('Generated Data Visualization');
+  
+  const chartRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current && !isResponseScreen) {
+      inputRef.current.focus();
+    }
+  }, [isResponseScreen]);
 
   const hitRequest = () => {
-    if (message) {
-      generateResponse(message);
-    } else {
-      alert('You must write something... !');
+    if (!message.trim()) {
+      setError('Please enter a prompt');
+      return;
+    }
+    setError(null);
+    generateResponse(message);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      hitRequest();
     }
   };
 
   const generateResponse = async (msg) => {
-    if (!msg) return;
-
-    // Append the custom message to the input
-    const customMessage = `\nGenerate data for provided Keyword that visualizes the data from your internal memory. Provide the output in JSON format with the following structure:\n{\n  "labels": ["Label1", "Label2", "Label3", ...],\n  "values": [Value1, Value2, Value3, ...]\n}\nEnsure the labels represent [WHAT_LABELS_REPRESENT] and the values represent [WHAT_VALUES_REPRESENT]. If applicable, ensure the values fall within an appropriate range based on the data. Make sure to not to generate any other text content. Just the JSON Content with absolute in raw form. Don't incapsulate the JSON content in code blocks.\n`;
+    setIsLoading(true);
+    
+    const customMessage = `\nGenerate data for provided Keyword that visualizes the data from your internal memory. Provide the output in JSON format with the following structure:
+{
+  "labels": ["Label1", "Label2", "Label3", ...],
+  "values": [Value1, Value2, Value3, ...],
+  "title": "Appropriate chart title describing the data"
+}
+Ensure the labels represent [WHAT_LABELS_REPRESENT] and the values represent [WHAT_VALUES_REPRESENT]. 
+Values should be positive numbers suitable for a pie chart. 
+Provide only the JSON content without any additional text or code blocks.`;
 
     try {
       const genAI = new GoogleGenerativeAI('AIzaSyDbXFeVo5nhLk-AbwPlx7eiivQLx--HPJs');
       const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      const fullMessage = msg + customMessage; // Combine user message with the custom message
+      const fullMessage = msg + customMessage;
       const result = await model.generateContent(fullMessage);
 
       const responseText = await result.response.text();
@@ -1052,175 +79,372 @@ const Example = () => {
       setMessages(newMessages);
       setIsResponseScreen(true);
       setMessage('');
-      setCount(count + 1);
-      console.log(responseText);
-
-      // Parse and validate JSON data
+      
       const jsonData = parseJSONResponse(responseText);
       if (jsonData) {
-        setChartData(jsonData);
-      } else {
-        console.log('Invalid or no JSON data found in the response.');
+        setChartData({
+          labels: jsonData.labels,
+          datasets: [{
+            label: 'Data Distribution',
+            data: jsonData.values,
+            backgroundColor: generateColors(jsonData.labels.length),
+            borderWidth: 1,
+            borderColor: '#333'
+          }]
+        });
+        setChartTitle(jsonData.title || 'Generated Data Visualization');
       }
     } catch (error) {
       console.error('Error generating response:', error);
-      alert('Something went wrong while generating the response.');
+      setError('Failed to generate response. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const parseJSONResponse = (text) => {
     try {
-      const jsonData = JSON.parse(text);
-      if (jsonData.labels && Array.isArray(jsonData.labels) && jsonData.values && Array.isArray(jsonData.values) && jsonData.labels.length === jsonData.values.length) {
-        const backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#FF5733', '#33FF57', '#5A33FF', '#FF33B5'].slice(0, jsonData.labels.length);
-
-        return {
-          labels: jsonData.labels,
-          datasets: [
-            {
-              label: 'Generated Data',
-              data: jsonData.values,
-              backgroundColor: backgroundColors,
-            },
-          ],
-        };
-      } else {
-        console.error('Invalid JSON format');
-        return null;
+      let jsonString = text;
+      const codeBlockMatch = text.match(/```(?:json)?\n([\s\S]*?)\n```/);
+      if (codeBlockMatch) {
+        jsonString = codeBlockMatch[1];
       }
+
+      const jsonData = JSON.parse(jsonString);
+      
+      if (!jsonData.labels || !jsonData.values || 
+          !Array.isArray(jsonData.labels) || 
+          !Array.isArray(jsonData.values) || 
+          jsonData.labels.length !== jsonData.values.length) {
+        throw new Error('Invalid JSON format');
+      }
+
+      return jsonData;
     } catch (error) {
       console.error('Error parsing JSON:', error);
+      setError('Failed to parse response data. The AI might have returned invalid format.');
       return null;
     }
+  };
+
+  const generateColors = (count) => {
+    const colors = [];
+    const hueStep = 360 / count;
+    
+    for (let i = 0; i < count; i++) {
+      const hue = i * hueStep;
+      colors.push(`hsl(${hue}, 70%, 60%)`);
+    }
+    
+    return colors;
   };
 
   const newChat = () => {
     setIsResponseScreen(false);
     setMessages([]);
     setChartData(null);
-    setCount(0);
+    setError(null);
   };
 
   const downloadChart = () => {
     if (chartRef.current) {
-      const imageUrl = chartRef.current.toBase64Image();
-      if (imageUrl) {
-        const link = document.createElement('a');
-        link.download = 'pie-chart.png';
-        link.href = imageUrl;
-        link.click();
-      } else {
-        console.error('Chart image could not be generated');
-      }
-    } else {
-      console.error('Chart reference is not defined');
+      const imageUrl = chartRef.current.toBase64Image('image/png', 1);
+      const link = document.createElement('a');
+      link.download = `${chartTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'chart'}.png`;
+      link.href = imageUrl;
+      link.click();
     }
   };
 
+  const samplePrompts = [
+    {
+      text: "Market share of smartphone brands in 2023",
+      icon: <IoCodeSlash />,
+      color: "text-blue-400"
+    },
+    {
+      text: "Planetary mass distribution in our solar system",
+      icon: <BiPlanet />,
+      color: "text-red-400"
+    },
+    {
+      text: "Programming language popularity 2023",
+      icon: <FaPython />,
+      color: "text-green-400"
+    },
+    {
+      text: "AI adoption rates by industry",
+      icon: <TbMessageChatbot />,
+      color: "text-purple-400"
+    }
+  ];
+
   return (
-    <div className="container top-16 p-5 w-full min-h-screen overflow-x-hidden bg-[#0E0E0E] text-white">
-      {isResponseScreen ? (
-        <div className="h-[80vh] px-4 md:px-10 lg:px-20">
-          <div className="header pt-[25px] flex items-center justify-between">
-            <h2 className="text-2xl">Assist Me</h2>
-            <button
-              id="newChatBtn"
-              className="bg-[#181818] p-2 md:p-3 rounded-[30px] cursor-pointer text-sm md:text-[14px] px-4 md:px-8"
-              onClick={newChat}
-            >
-              New Chat
-            </button>
-          </div>
-
-          <div className="messages mt-4">
-            {messages.map((msg, index) => (
-              <div key={index} className={`${msg.type} mb-2`}>{msg.text}</div>
-            ))}
-          </div>
-
-          {/* Display Pie Chart */}
-          {chartData && (
-            <div className="mt-4">
-              <div className="">
-                <Pie ref={chartRef} data={chartData} />
-                <button
-                  className="w-23 h-20 top-0 right-0 bg-[#201f1f] p-2 rounded cursor-pointer"
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+      <AnimatePresence>
+        {isResponseScreen ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="container mx-auto p-4 md:p-6 lg:p-8"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <motion.h2 
+                initial={{ x: -20 }}
+                animate={{ x: 0 }}
+                className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500"
+              >
+                Data Visualization
+              </motion.h2>
+              
+              <div className="flex gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={downloadChart}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg text-sm"
                 >
-                  Download Chart
-                </button>
+                  <IoDownload size={16} />
+                  <span className="hidden sm:inline">Download</span>
+                </motion.button>
+                
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={newChat}
+                  className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg text-sm"
+                >
+                  <IoAdd size={16} className="rotate-45" />
+                  <span className="hidden sm:inline">New</span>
+                </motion.button>
               </div>
             </div>
-          )}
 
-          {/* Display "Numeric Data Analysis" section */}
-          {chartData && (
-            <div className="mt-4">
-              <h3 className="text-xl mb-2">Numeric Data Analysis</h3>
-              <div className="bg-[#202020] p-4 rounded-md">
-                <p className="text-gray-300">Here's a breakdown of the data:</p>
-                <ul className="list-disc pl-5 mt-2">
-                  {chartData.labels.map((label, index) => (
-                    <li key={index}>
-                      {label}: {chartData.datasets[0].data[index]}
-                    </li>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
+                <div className="space-y-4">
+                  {messages.map((msg, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className={`p-3 rounded-lg ${msg.type === 'userMsg' 
+                        ? 'bg-blue-900/30 border border-blue-700/50 ml-auto max-w-3xl' 
+                        : 'bg-gray-800/50 border border-gray-700/50 mr-auto max-w-3xl'}`}
+                    >
+                      {msg.text}
+                    </motion.div>
                   ))}
-                </ul>
+                </div>
+
+                {chartData && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-gray-800/50 p-4 rounded-xl border border-gray-700/50"
+                  >
+                    <div className="h-80 md:h-96">
+                      <Pie 
+                        ref={chartRef}
+                        data={chartData}
+                        options={{
+                          responsive: true,
+                          plugins: {
+                            legend: { position: 'right' },
+                            title: {
+                              display: true,
+                              text: chartTitle,
+                              font: { size: 16 }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-3 bg-red-900/30 border border-red-700 rounded-lg text-sm"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                {chartData && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="bg-gray-800/50 p-3 rounded-lg border border-gray-700/50"
+                  >
+                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                      <TbChartPie className="text-blue-400" />
+                      Data Analysis
+                    </h3>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400">Total Categories</span>
+                        <span>{chartData.labels.length}</span>
+                      </div>
+                      
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400">Total Value</span>
+                        <span>
+                          {chartData.datasets[0].data.reduce((a, b) => a + b, 0).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-3">
+                      <h4 className="text-base mb-1">Distribution</h4>
+                      <div className="space-y-1 text-sm">
+                        {chartData.labels.map((label, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <div 
+                              className="w-2.5 h-2.5 rounded-full" 
+                              style={{ 
+                                backgroundColor: chartData.datasets[0].backgroundColor[index] 
+                              }}
+                            />
+                            <span className="flex-1 truncate">{label}</span>
+                            <span>
+                              {chartData.datasets[0].data[index]}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="sticky bottom-6"
+                >
+                  <div className="relative">
+                    <input
+                      ref={inputRef}
+                      className="w-full bg-gray-700/50 border border-gray-600/50 focus:border-blue-500 rounded-lg py-2 pl-3 pr-9 outline-none text-sm"
+                      placeholder="Modify the chart..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      disabled={isLoading}
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-blue-400 p-1"
+                      onClick={hitRequest}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <IoSend size={16} />
+                      )}
+                    </motion.button>
+                  </div>
+                </motion.div>
               </div>
             </div>
-          )}
-        </div>
-      ) : (
-        <div className="middle h-[80vh] flex flex-col items-center justify-center px-4 md:px-10 lg:px-20">
-          <h1 className="text-4xl mb-6">Assist Me To Create Pie-Chart</h1>
-          <div className="boxes grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-              <p className="text-[18px]">
-                What is coding? <br />
-                How can we learn it?
-              </p>
-              <i className="absolute right-3 bottom-3 text-[18px]"><IoCodeSlash /></i>
-            </div>
-            <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-              <p className="text-[18px]">
-                Which is the red <br />
-                planet of the solar <br />
-                system?
-              </p>
-              <i className="absolute right-3 bottom-3 text-[18px]"><BiPlanet /></i>
-            </div>
-            <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-              <p className="text-[18px]">
-                In which year was Python <br />
-                invented?
-              </p>
-              <i className="absolute right-3 bottom-3 text-[18px]"><FaPython /></i>
-            </div>
-            <div className="card rounded-lg cursor-pointer transition-all hover:bg-[#201f1f] p-4 relative bg-[#181818]">
-              <p className="text-[18px]">
-                How can we use <br />
-                AI for adoption?
-              </p>
-              <i className="absolute right-3 bottom-3 text-[18px]"><TbMessageChatbot /></i>
-            </div>
-          </div>
-
-          <div className="input flex mt-10 relative w-full md:w-[75%] lg:w-[55%]">
-            <input
-              className="p-4 w-full bg-[#202020] text-white outline-none border border-[#202020] focus:border-[#FF5733] transition-all rounded"
-              placeholder="Give me prompt so i can easily create a pie chart for you"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <i
-              className="absolute top-3 right-3 text-[#FF5733] text-[18px] cursor-pointer"
-              onClick={hitRequest}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="container mx-auto p-4 md:p-6 lg:p-8 flex flex-col items-center justify-center min-h-screen"
+          >
+            <motion.div
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-center mb-8"
             >
-              <IoSend />
-            </i>
-          </div>
-        </div>
-      )}
+              <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                AI-Powered Pie Chart Generator
+              </h1>
+              <p className="text-lg text-gray-400 max-w-2xl">
+                Transform your prompts into beautiful data visualizations with AI
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="w-full max-w-3xl"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                {samplePrompts.map((prompt, index) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ y: -3 }}
+                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + index * 0.1 }}
+                    className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-blue-500/50 rounded-lg p-3 cursor-pointer"
+                    onClick={() => setMessage(prompt.text)}
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className={`text-xl mt-0.5 ${prompt.color}`}>
+                        {prompt.icon}
+                      </span>
+                      <p className="text-base">{prompt.text}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="relative"
+              >
+                <input
+                  ref={inputRef}
+                  className="w-full bg-gray-700/50 border border-gray-600/50 focus:border-blue-500 rounded-lg py-2 pl-3 pr-9 outline-none text-sm"
+                  placeholder="Describe the data you want to visualize..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 text-blue-400 p-1 rounded-lg heigth-8 w-8 flex items-center justify-center bg-gray-800/50 hover:bg-gray-700/50"
+                  onClick={hitRequest}
+                >
+                  <IoSend size={1} />
+                </motion.button>
+              </motion.div>
+
+              {error && (
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-1.5 text-red-400 text-xs"
+                >
+                  {error}
+                </motion.p>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

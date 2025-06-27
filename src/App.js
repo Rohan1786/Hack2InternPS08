@@ -1,68 +1,87 @@
-
 import React from 'react';
-import { useRoutes } from 'react-router-dom';
-
+import { useRoutes, Outlet, Navigate } from 'react-router-dom';
 import Login from './components/auth/login';
 import Register from './components/auth/register';
 import Header from './components/header';
-// import Home from './components/home';
-import { AuthProvider } from './contexts/authContext';
+import { AuthProvider, useAuth } from './contexts/authContext';
 import Example from './components/Example';
 import Dashboard from './components/Dashboard';
 
+// Layout component that includes the Header for authenticated routes
+const AuthenticatedLayout = () => {
+  const { userLoggedIn } = useAuth();
+
+  if (!userLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-1 p-4 md:p-6">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+// Layout for auth pages (login/register) without header
+const AuthLayout = () => {
+  const { userLoggedIn } = useAuth();
+
+  if (userLoggedIn) {
+    return <Navigate to="/" replace />;
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+      <Outlet />
+    </div>
+  );
+};
 
 function App() {
   const routesArray = [
     {
-      path: "/",
-      element: <Dashboard />,
+      element: <AuthLayout />,
+      children: [
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/register",
+          element: <Register />,
+        },
+      ],
     },
     {
-      path: "/login",
-      element: <Login />,
+      element: <AuthenticatedLayout />,
+      children: [
+        {
+          path: "/",
+          element: <Dashboard />,
+        },
+        {
+          path: "/home",
+          element: <Example />,
+        },
+      ],
     },
-    {
-      path: "/register",
-      element: <Register />,
-    },
-    {
-      path: "/home",
-      element: <Example />,
-    },
-    // Add a fallback route for unmatched paths
+    // Fallback route
     {
       path: "*",
-      element: <Login />,
+      element: <Navigate to="/" replace />,
     },
   ];
 
-  // Use the `useRoutes` hook to create route elements
   const routesElement = useRoutes(routesArray);
 
   return (
     <AuthProvider>
-      <Header /> {/* Ensure Header is always visible */}
-      {/* <div className="w-full h-screen flex flex-col"> */}
-        {routesElement}
-
-        {/* <Example/> */}
-      {/* </div> */}
-
+      {routesElement}
     </AuthProvider>
   );
 }
 
 export default App;
-
-// import React from 'react'
-// import Example from './components/Example'
-
-// const App = () => {
-//   return (
-//     <div>
-//       <Example/>
-//     </div>
-//   )
-// }
-
-// export default App
