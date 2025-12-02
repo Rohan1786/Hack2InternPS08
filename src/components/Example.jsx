@@ -64,8 +64,8 @@ Values should be positive numbers suitable for a pie chart.
 Provide only the JSON content without any additional text or code blocks.`;
 
     try {
-      const genAI = new GoogleGenerativeAI('AIzaSyDbXFeVo5nhLk-AbwPlx7eiivQLx--HPJs');
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const genAI = new GoogleGenerativeAI('AIzaSyB4737Dd3U7Oj0ieapFp3sxhSW0F_RedGs');
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
       const fullMessage = msg + customMessage;
       const result = await model.generateContent(fullMessage);
 
